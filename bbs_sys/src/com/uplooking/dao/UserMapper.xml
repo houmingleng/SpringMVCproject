@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uplooking.dao.UserMapper">
+	<select id="findByName" resultType="User">
+		SELECT uid,uname,upwd,usex,ublood,uhobby,ubirth,ustatus FROM tbl_user WHERE uname = #{name}
+	</select>
+	<select id="getPhoto" resultType="User">
+		SELECT uphoto FROM tbl_user WHERE uid = #{id}
+	</select>
+	<select id="count" resultType="int">
+		SELECT COUNT(uid) FROM tbl_user WHERE ustatus != '1043' 
+			<if test="key!=null and key!=''">
+				AND uname LIKE CONCAT('%',#{key},'%') 
+			</if>
+	</select>
+	<select id="find" resultType="User">
+		SELECT uid,uname,upwd,usex,ublood,uhobby,ubirth,ustatus FROM tbl_user 
+			WHERE ustatus != '1043' 
+			<if test="key!=null and key!=''">
+				AND uname LIKE CONCAT('%',#{key},'%') 
+			</if>
+			LIMIT #{start},#{size}
+	</select>
+	<select id="getStatus" resultType="User">
+		SELECT ustatus FROM tbl_user WHERE uid = #{id}
+	</select>
+	<update id="lock">
+		UPDATE tbl_user SET ustatus = #{status} WHERE uid = #{id}
+	</update>
+	<resultMap type="User" id="map1">
+		<id property="uid" column="uid"/>
+		<result property="uname" column="uname"/>
+		<collection property="roles" ofType="Role">
+			<id property="rid" column="rid"/>
+			<result property="rname" column="rname"/>
+			<result property="rdesc" column="rdesc"/>
+		</collection>
+	</resultMap>
+	<select id="getUserRole" resultMap="map1">
+		SELECT uid,uname,rid,rname,rdesc FROM tbl_user 
+			LEFT JOIN tbl_userrole ON uid = uruid
+			LEFT JOIN tbl_role ON urrid = rid
+			WHERE uid = #{id}
+	</select>
+</mapper>

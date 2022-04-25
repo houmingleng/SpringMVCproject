@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uplooking.dao.UserMapper">
+	<select id="findByName" resultType="User">
+		SELECT uid,uname,upwd,usex,ublood,uhobby,ubirth,ustatus FROM tbl_user WHERE uname = #{name}
+	</select>
+	<select id="getPhoto" resultType="User">
+		SELECT uphoto FROM tbl_user WHERE uid = #{id}
+	</select>
+	<insert id="insert">
+		INSERT INTO tbl_user(uname,upwd,usex,ublood,uhobby,ubirth,uphoto,ustatus) 
+			VALUES(#{uname},#{upwd},#{usex},#{ublood},#{uhobby},#{ubirth},#{uphoto},#{ustatus})
+			<selectKey order="AFTER" resultType="String" keyProperty="uid">
+				SELECT LAST_INSERT_ID()
+			</selectKey>
+	</insert>
+	<select id="isPass" resultType="int">
+		SELECT COUNT(uid) FROM tbl_user 
+			LEFT JOIN tbl_userrole ON uid = uruid 
+			LEFT JOIN tbl_role ON urrid = rid
+			LEFT JOIN tbl_rolepermission ON rid = rprid 
+			LEFT JOIN tbl_permission ON rppid = pid
+				WHERE uname = #{name}  AND purl= #{url}
+	</select>
+	<insert id="addRole">
+		INSERT INTO tbl_userrole(uruid,urrid) VALUES(#{id},1)
+	</insert>
+</mapper>

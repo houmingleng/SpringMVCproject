@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uplooking.dao.RoleMapper">
+	<select id="findAll" resultType="Role">
+		SELECT rid,rname,rdesc FROM tbl_role
+	</select>
+	<delete id="delete">
+		DELETE FROM tbl_userrole WHERE uruid = #{uid}
+	</delete>
+	<insert id="insert">
+		INSERT INTO tbl_userrole(uruid,urrid) VALUES(#{uid},#{rid})
+	</insert>
+	<resultMap type="Role" id="map1">
+		<id property="rid" column="rid"/>
+		<result property="rname" column="rname"/>
+		<result property="rdesc" column="rdesc"/>
+		<collection property="perms" ofType="Perm">
+			<id property="pid" column="pid"/>
+			<result property="purl" column="purl"/>
+			<result property="ptoken" column="ptoken"/>
+			<result property="pdesc" column="pdesc"/>
+		</collection>
+	</resultMap>
+	<select id="getRolePerm" resultMap="map1">
+		SELECT rid,rname,rdesc,pid,purl,ptoken,pdesc FROM tbl_role 
+			LEFT JOIN tbl_rolepermission ON rid = rprid
+			LEFT JOIN tbl_permission ON rppid = pid 
+				WHERE rid = #{id}
+	</select>
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uplooking.dao.WordMapper">
+	<select id="find" resultType="Word">
+		SELECT kid,kname,kclick FROM tbl_keyword 
+		<if test="key!=null and key!=''">
+			WHERE kname LIKE CONCAT(#{key},'%')
+		</if>
+	</select>
+	<select id="exist" resultType="int">
+		SELECT COUNT(kid) FROM tbl_keyword WHERE kname = #{key}
+	</select>
+	<insert id="insert">
+		INSERT INTO tbl_keyword(kname,kclick) VALUES(#{key},1)
+	</insert>
+	<update id="update">
+		UPDATE tbl_keyword SET kclick=kclick+1 WHERE kname = #{key}
+	</update>
+</mapper>

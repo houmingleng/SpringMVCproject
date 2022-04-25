@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uplooking.dao.RptMapper">
+	<select id="count" resultType="int">
+		SELECT COUNT(oid) FROM tbl_report WHERE oaid = #{aid}
+	</select>
+	<resultMap type="Rpt" id="map1">
+		<id property="oid" column="oid"/>
+		<result property="ofid" column="ofid"/>
+		<result property="oaid" column="oaid"/>
+		<result property="ouid" column="ouid"/>
+		<result property="omessage" column="omessage"/>
+		<result property="odate" column="odate"/>
+		<association property="user" javaType="User">
+			<result property="uname" column="uname"/>
+		</association>
+	</resultMap>
+	<select id="find" resultMap="map1">
+		SELECT oid,ofid,oaid,ouid,uname,omessage,odate FROM tbl_report 
+			LEFT JOIN tbl_user ON uid = ouid
+				WHERE oaid = #{aid} LIMIT #{start},#{size}
+	</select>
+	<select id="maxFloor" resultType="int">
+		SELECT COUNT(ofid)+1 FROM tbl_report WHERE oaid = #{aid}
+	</select>
+	<insert id="insert">
+		INSERT INTO tbl_report(ofid,oaid,ouid,omessage,odate)
+			VALUES(#{ofid},#{oaid},#{ouid},#{omessage},#{odate})
+	</insert>
+</mapper>

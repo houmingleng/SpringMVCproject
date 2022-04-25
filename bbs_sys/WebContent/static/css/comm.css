@@ -1,0 +1,17 @@
+body{
+	font-size: 14px;
+}
+a{
+	text-decoration: none;
+}
+a:HOVER {
+	text-decoration: underline;
+}
+.error{
+	color: red;
+	font-weight: bolder;
+}
+.ok{
+	color: green;
+	font-weight: normal;
+}

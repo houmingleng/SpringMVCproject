@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.uplooking.dao.ArtMapper">
+	<select id="count" resultType="int">
+		SELECT COUNT(aid) FROM tbl_article 
+			<if test="key!=null and key!=''">
+				 WHERE atitle LIKE CONCAT('%',#{key},'%')
+			</if>
+	</select>
+	<resultMap type="Art" id="map1">
+		<id property="aid" column="aid"/>
+		<result property="adid" column="adid"/>
+		<result property="atitle" column="atitle"/>
+		<result property="auid" column="auid"/>
+		<result property="adate" column="adate"/>
+		<result property="aclick" column="aclick"/>
+		<association property="dtype" javaType="Dict">
+			<result property="dvalue" column="dvalue"/>
+		</association>
+		<association property="user" javaType="User">
+			<result property="uname" column="uname"/>
+		</association>
+	</resultMap>
+	<select id="find" resultMap="map1">
+		SELECT aid,adid,dvalue,atitle,auid,uname,adate,aclick FROM tbl_article
+			LEFT JOIN tbl_dictionary ON adid = dkey
+			LEFT JOIN tbl_user ON auid = uid 
+			<if test="key!=null and key!=''">
+				 WHERE atitle LIKE CONCAT('%',#{key},'%')
+			</if> 
+			ORDER BY aclick DESC,adate DESC
+			LIMIT #{start},#{size}
+	</select>
+	<resultMap type="Art" id="map2">
+		<id property="aid" column="aid"/>
+		<result property="adid" column="adid"/>
+		<result property="atitle" column="atitle"/>
+		<result property="acontext" column="acontext"/>
+		<result property="auid" column="auid"/>
+		<result property="adate" column="adate"/>
+		<result property="aclick" column="aclick"/>
+		<association property="dtype" javaType="Dict">
+			<result property="dvalue" column="dvalue"/>
+		</association>
+		<association property="user" javaType="User">
+			<result property="uname" column="uname"/>
+		</association>
+	</resultMap>
+	<select id="findById" resultMap="map2">
+		SELECT aid,adid,dvalue,atitle,acontext,auid,uname,adate,aclick FROM tbl_article
+			LEFT JOIN tbl_dictionary ON adid = dkey
+			LEFT JOIN tbl_user ON auid = uid 
+				WHERE aid = #{id}
+	</select>
+	<update id="update">
+		UPDATE tbl_article SET aclick=aclick+1 WHERE aid = #{id}
+	</update>
+	<insert id="insert">
+		INSERT INTO tbl_article(adid,atitle,acontext,auid,adate,aclick)
+			VALUES(#{adid},#{atitle},#{acontext},#{auid},#{adate},#{aclick})
+			<selectKey order="AFTER" resultType="String" keyProperty="aid">
+				SELECT LAST_INSERT_ID()
+			</selectKey>
+	</insert>
+</mapper>
